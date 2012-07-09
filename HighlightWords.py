@@ -6,7 +6,10 @@ SCOPES = ['string', 'entity.name.class', 'variable.parameter', 'invalid.deprecat
 class HighlightWordsCommand(sublime_plugin.WindowCommand):
 	def run(self):
 		view = self.window.active_view()
-		self.window.show_input_panel('Words to Highlight:', view.settings().get('highlight_text', ''), None, self.on_change, self.on_cancel)
+		v = self.window.show_input_panel('Words to Highlight:', view.settings().get('highlight_text', ''), None, self.on_change, self.on_cancel)
+		sel = v.sel()
+		sel.clear()
+		sel.add(sublime.Region(0, v.size()))
 
 	def on_change(self, text):
 		stamp = time.time()
