@@ -1,0 +1,4 @@
+[
+	{ "keys": ["ctrl+alt+h"], "command": "highlight_words" },
+	{ "keys": ["ctrl+alt+u"], "command": "unhighlight_words" }
+]

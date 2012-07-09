@@ -1,0 +1,17 @@
+[
+	{
+		"id": "edit",
+		"children":
+		[
+			{
+				"caption": "Highlight",
+				"id": "highlight",
+				"children":
+				[
+					{ "command": "highlight_words" },
+					{ "command": "unhighlight_words" }
+				]
+			}
+		]
+	}
+]
