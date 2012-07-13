@@ -6,6 +6,8 @@ SCOPES = ['string', 'entity.name.class', 'variable.parameter', 'invalid.deprecat
 class HighlightWordsCommand(sublime_plugin.WindowCommand):
 	def run(self):
 		view = self.window.active_view()
+		if not view:
+			return
 		v = self.window.show_input_panel('Words to Highlight:', view.settings().get('highlight_text', ''), None, self.on_change, self.on_cancel)
 		sel = v.sel()
 		sel.clear()
@@ -43,6 +45,8 @@ class HighlightWordsCommand(sublime_plugin.WindowCommand):
 class UnhighlightWordsCommand(sublime_plugin.WindowCommand):
 	def run(self):
 		view = self.window.active_view()
+		if not view:
+			return
 		size = view.settings().get('highlight_size', 0)
 		for i in range(size):
 			view.erase_regions('highlight_word_%d' % i)
