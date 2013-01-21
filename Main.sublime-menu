@@ -4,8 +4,8 @@
 		"children":
 		[
 			{
-				"caption": "Highlight",
-				"id": "highlight",
+				"caption": "Highlight Words",
+				"id": "highlight_words",
 				"children":
 				[
 					{ "command": "highlight_words" },
