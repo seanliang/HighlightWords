@@ -1,7 +1,7 @@
 HighlightWords
 ==============
 
-A Sublime Text 2 Plugin for highlighting mutiple words in different colors
+A Sublime Text 2 and 3 plugin for highlighting mutiple words in different colors
 
 Usage
 ------------------
