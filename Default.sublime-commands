@@ -1,0 +1,12 @@
+[
+    {
+        "caption": "HighlightWords: Highlight Words",
+        "command": "highlight_words",
+        "args": {}
+    },
+    {
+        "caption": "HighlightWords: Unhighlight Words",
+        "command": "unhighlight_words",
+        "args": {}
+    }
+]
