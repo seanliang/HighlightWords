@@ -8,7 +8,14 @@ class HighlightWordsCommand(sublime_plugin.WindowCommand):
 		view = self.window.active_view()
 		if not view:
 			return
-		v = self.window.show_input_panel('Words to Highlight:', view.settings().get('highlight_text', ''), None, self.on_change, self.on_cancel)
+		cursor_word = view.substr(view.word(view.sel()[0].begin()))
+		word_list = view.settings().get('highlight_text', '').split()
+		if cursor_word in word_list:
+			word_list.remove(cursor_word)
+		else:
+			word_list.append(cursor_word)
+		display_list = ' '.join(word_list)
+		v = self.window.show_input_panel('Words to Highlight:', display_list, None, self.on_change, None)
 		sel = v.sel()
 		sel.clear()
 		sel.add(sublime.Region(0, v.size()))
