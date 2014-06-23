@@ -8,5 +8,10 @@
         "caption": "HighlightWords: Unhighlight Words",
         "command": "unhighlight_words",
         "args": {}
+    },
+    {
+        "caption": "HighlightWords: Toggle Settings",
+        "command": "highlight_settings",
+        "args": {}
     }
 ]

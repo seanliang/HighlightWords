@@ -9,7 +9,8 @@
 				"children":
 				[
 					{ "command": "highlight_words" },
-					{ "command": "unhighlight_words" }
+					{ "command": "unhighlight_words" },
+					{ "command": "highlight_settings", "caption": "Toggle Settings" }
 				]
 			}
 		]
