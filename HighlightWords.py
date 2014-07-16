@@ -12,7 +12,7 @@ IGNORE_CASE = False
 class HighlightWordsCommand(sublime_plugin.WindowCommand):
 	def get_words(self, text):
 		if USE_REGEX:
-			return list(filter(lambda x: x and x != ' ', re.split('((?:\\\\ |[^ ])+)', text)))
+			return list(filter(lambda x: x and x != ' ', re.split(r'((?:\\ |[^ ])+)', text)))
 		else:
 			return text.split()
 
@@ -25,7 +25,8 @@ class HighlightWordsCommand(sublime_plugin.WindowCommand):
 			if not region.empty():
 				cursor_word = view.substr(region)
 				if USE_REGEX:
-					cursor_word = re.escape(cursor_word)
+					# ST uses perl regular expression syntax, espcae all special characters
+					cursor_word = re.sub(r'([ \\.\[{}()\*+?|^$])', r'\\\1', cursor_word).replace('\t', '\\t').replace('\n', '\\n')
 				if cursor_word in word_list:
 					word_list.remove(cursor_word)
 				else:
