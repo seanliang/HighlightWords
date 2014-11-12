@@ -8,6 +8,7 @@ SCOPES = ['string', 'entity.name.class', 'variable.parameter', 'invalid.deprecat
 ST3 = False if sys.version_info < (3, 0) else True
 USE_REGEX = False
 IGNORE_CASE = False
+WHOLE_WORD = False # only effective when USE_REGEX is True
 
 class HighlightWordsCommand(sublime_plugin.WindowCommand):
 	def get_words(self, text):
@@ -22,16 +23,18 @@ class HighlightWordsCommand(sublime_plugin.WindowCommand):
 			return
 		word_list = self.get_words(view.settings().get('highlight_text', ''))
 		for region in view.sel():
-			if not region.empty():
-				cursor_word = view.substr(region)
-				if USE_REGEX:
-					# ST uses perl regular expression syntax, espcae all special characters
-					cursor_word = re.sub(r'([ \\.\[{}()\*+?|^$])', r'\\\1', cursor_word).replace('\t', '\\t').replace('\n', '\\n')
-				if cursor_word in word_list:
-					word_list.remove(cursor_word)
-				else:
-					word_list.append(cursor_word)
-				break
+			region = region.empty() and view.word(region) or region
+			cursor_word = view.substr(region).strip()
+			if USE_REGEX:
+				# ST uses perl regular expression syntax, espcae all special characters
+				cursor_word = re.sub(r'([ \\.\[{}()\*+?|^$])', r'\\\1', cursor_word).replace('\t', '\\t').replace('\n', '\\n')
+				if WHOLE_WORD:
+					cursor_word = "\\b" + cursor_word + "\\b"
+			if cursor_word in word_list:
+				word_list.remove(cursor_word)
+			else:
+				word_list.append(cursor_word)
+			break
 		display_list = ' '.join(word_list)
 		prompt = 'Highlight words '
 		if USE_REGEX:
@@ -43,7 +46,7 @@ class HighlightWordsCommand(sublime_plugin.WindowCommand):
 		else:
 			prompt += 'Case Sensitive'
 		prompt += '):'
-		v = self.window.show_input_panel(prompt, display_list, None, self.on_change, None)
+		v = self.window.show_input_panel(prompt, display_list, None, self.on_change, self.on_cancel)
 		sel = v.sel()
 		sel.clear()
 		sel.add(sublime.Region(0, v.size()))
@@ -96,7 +99,8 @@ class HighlightSettingsCommand(sublime_plugin.WindowCommand):
 	def run(self):
 		names = [
 			'Turn [Regular Expression] ' + ('OFF' if USE_REGEX else 'ON'),
-			'Turn [Case Sensitive] ' + ('ON' if IGNORE_CASE else 'OFF')
+			'Turn [Case Sensitive] ' + ('ON' if IGNORE_CASE else 'OFF'),
+			'Turn [Whole word] ' + ('OFF' if WHOLE_WORD else 'ON')
 		]
 		self.window.show_quick_panel(names, self.on_done)
 
@@ -106,15 +110,18 @@ class HighlightSettingsCommand(sublime_plugin.WindowCommand):
 		settings = sublime.load_settings('HighlightWords.sublime-settings')
 		if selected == 0:
 			settings.set('use_regex', not USE_REGEX)
-		else:
+		elif selected == 1:
 			settings.set('ignore_case', not IGNORE_CASE)
+		else:
+			settings.set('whole_word', not WHOLE_WORD)
 		sublime.save_settings('HighlightWords.sublime-settings')
 
 def get_settings():
-	global USE_REGEX, IGNORE_CASE
+	global USE_REGEX, IGNORE_CASE, WHOLE_WORD
 	setting = sublime.load_settings('HighlightWords.sublime-settings')
 	USE_REGEX = setting.get('use_regex', False)
 	IGNORE_CASE = setting.get('ignore_case', False)
+	WHOLE_WORD = setting.get('whole_word', False)
 	return setting
 
 def plugin_loaded():
