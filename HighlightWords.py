@@ -114,14 +114,16 @@ class HighlightSettingsCommand(sublime_plugin.WindowCommand):
 			settings.set('ignore_case', not IGNORE_CASE)
 		else:
 			settings.set('whole_word', not WHOLE_WORD)
+		settings.set('colors_by_scope', SCOPES)
 		sublime.save_settings('HighlightWords.sublime-settings')
 
 def get_settings():
-	global USE_REGEX, IGNORE_CASE, WHOLE_WORD
+	global USE_REGEX, IGNORE_CASE, WHOLE_WORD, SCOPES
 	setting = sublime.load_settings('HighlightWords.sublime-settings')
 	USE_REGEX = setting.get('use_regex', False)
 	IGNORE_CASE = setting.get('ignore_case', False)
 	WHOLE_WORD = setting.get('whole_word', False)
+	SCOPES = setting.get('colors_by_scope', SCOPES)
 	return setting
 
 def plugin_loaded():
