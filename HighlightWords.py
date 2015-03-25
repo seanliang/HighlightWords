@@ -2,6 +2,7 @@ import sublime, sublime_plugin
 import time
 import sys
 import re
+import functools
 
 SCOPES = ['string', 'entity.name.class', 'variable.parameter', 'invalid.deprecated', 'invalid', 'support.function']
 
@@ -116,6 +117,30 @@ class HighlightSettingsCommand(sublime_plugin.WindowCommand):
 			settings.set('whole_word', not WHOLE_WORD)
 		settings.set('colors_by_scope', SCOPES)
 		sublime.save_settings('HighlightWords.sublime-settings')
+
+class HighlightKeywordsCommand(sublime_plugin.EventListener):
+	modified = False
+
+	def handleTimeout(self, view):  
+		self.modified = False
+		self.highlightKws(view)
+
+	def on_modified(self, view):
+		print ("on_modified")
+		if False == self.modified:
+			self.modified = True
+			# Ask for handleTimeout to be called in 1000ms
+			sublime.set_timeout(functools.partial(self.handleTimeout, view), 5000)
+
+	def highlightKws(self, view):
+		print ("Run command and Update View")
+		words = ['def']
+		size = 0
+		flag = sublime.LITERAL
+		for word in words:
+			regions = view.find_all(word, flag)
+			view.add_regions('highlight_word_%d' % size, regions,  'string' , '', sublime.HIDE_ON_MINIMAP)
+			size += 1
 
 def get_settings():
 	global USE_REGEX, IGNORE_CASE, WHOLE_WORD, SCOPES
