@@ -10,6 +10,8 @@ ST3 = False if sys.version_info < (3, 0) else True
 USE_REGEX = False
 IGNORE_CASE = False
 WHOLE_WORD = False # only effective when USE_REGEX is True
+KEYWORDS = []
+KEYWORD_COLOR = 'string'
 
 class HighlightWordsCommand(sublime_plugin.WindowCommand):
 	def get_words(self, text):
@@ -126,29 +128,28 @@ class HighlightKeywordsCommand(sublime_plugin.EventListener):
 		self.highlightKws(view)
 
 	def on_modified(self, view):
-		print ("on_modified")
 		if False == self.modified:
 			self.modified = True
-			# Ask for handleTimeout to be called in 1000ms
+			# Refresh view 5 sec at most.
 			sublime.set_timeout(functools.partial(self.handleTimeout, view), 5000)
 
 	def highlightKws(self, view):
-		print ("Run command and Update View")
-		words = ['def']
+		words = KEYWORDS
 		size = 0
 		flag = sublime.LITERAL
 		for word in words:
 			regions = view.find_all(word, flag)
-			view.add_regions('highlight_word_%d' % size, regions,  'string' , '', sublime.HIDE_ON_MINIMAP)
+			view.add_regions('highlight_keyword_%d' % size, regions,  KEYWORD_COLOR , '', sublime.HIDE_ON_MINIMAP)
 			size += 1
 
 def get_settings():
-	global USE_REGEX, IGNORE_CASE, WHOLE_WORD, SCOPES
+	global USE_REGEX, IGNORE_CASE, WHOLE_WORD, SCOPES, KEYWORDS
 	setting = sublime.load_settings('HighlightWords.sublime-settings')
 	USE_REGEX = setting.get('use_regex', False)
 	IGNORE_CASE = setting.get('ignore_case', False)
 	WHOLE_WORD = setting.get('whole_word', False)
 	SCOPES = setting.get('colors_by_scope', SCOPES)
+	KEYWORDS = setting.get('fixed_keywords', [])
 	return setting
 
 def plugin_loaded():
