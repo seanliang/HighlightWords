@@ -13,11 +13,8 @@
 	"ignore_case": false,
 
 	// Keywords to be always highlighted, clear the list to disable it.
-	"fixed_keywords":
+	"permanent_highlight_keyword_color_mappings":
 	[
-		//"TODO", "WARNING"
-	],
-
-	// Colors to high-light fixed keywords
-	"keyword_color_by_scope": "support.function"
+		//{"keyword": "TODO", "color": "support.function"},
+	]
 }

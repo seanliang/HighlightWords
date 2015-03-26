@@ -10,8 +10,7 @@ ST3 = False if sys.version_info < (3, 0) else True
 USE_REGEX = False
 IGNORE_CASE = False
 WHOLE_WORD = False # only effective when USE_REGEX is True
-KEYWORDS = []
-KEYWORD_COLOR = 'support.function'
+KEYWORD_MAP = []
 
 class HighlightWordsCommand(sublime_plugin.WindowCommand):
 	def get_words(self, text):
@@ -137,23 +136,29 @@ class HighlightKeywordsCommand(sublime_plugin.EventListener):
 		self.highlightKws(view)
 
 	def highlightKws(self, view):
-		words = KEYWORDS
+		word_colors = KEYWORD_MAP
 		size = 0
 		flag = sublime.LITERAL
-		for word in words:
-			regions = view.find_all(word, flag)
-			view.add_regions('highlight_keyword_%d' % size, regions,  KEYWORD_COLOR , '', sublime.HIDE_ON_MINIMAP)
-			size += 1
+		word_set = set()
+		for pair in word_colors:
+			word = pair['keyword']
+			color = pair['color']
+			if (word and color):
+				if word in word_set:
+					continue
+				word_set.add(word)
+				regions = view.find_all(word, flag)
+				view.add_regions('highlight_keyword_%d' % size, regions, color, '', sublime.HIDE_ON_MINIMAP)
+				size += 1
 
 def get_settings():
-	global USE_REGEX, IGNORE_CASE, WHOLE_WORD, SCOPES, KEYWORDS
+	global USE_REGEX, IGNORE_CASE, WHOLE_WORD, SCOPES, KEYWORD_MAP
 	setting = sublime.load_settings('HighlightWords.sublime-settings')
 	USE_REGEX = setting.get('use_regex', False)
 	IGNORE_CASE = setting.get('ignore_case', False)
 	WHOLE_WORD = setting.get('whole_word', False)
 	SCOPES = setting.get('colors_by_scope', SCOPES)
-	KEYWORDS = setting.get('fixed_keywords', KEYWORDS)
-	KEYWORD_COLOR = setting.get('keyword_color_by_scope', KEYWORD_COLOR)
+	KEYWORD_MAP = setting.get('permanent_highlight_keyword_color_mappings', [])
 	return setting
 
 def plugin_loaded():
