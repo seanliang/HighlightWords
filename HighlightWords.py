@@ -11,7 +11,7 @@ USE_REGEX = False
 IGNORE_CASE = False
 WHOLE_WORD = False # only effective when USE_REGEX is True
 KEYWORDS = []
-KEYWORD_COLOR = 'string'
+KEYWORD_COLOR = 'support.function'
 
 class HighlightWordsCommand(sublime_plugin.WindowCommand):
 	def get_words(self, text):
@@ -133,6 +133,9 @@ class HighlightKeywordsCommand(sublime_plugin.EventListener):
 			# Refresh view 5 sec at most.
 			sublime.set_timeout(functools.partial(self.handleTimeout, view), 5000)
 
+	def on_activated_async(self, view):
+		self.highlightKws(view)
+
 	def highlightKws(self, view):
 		words = KEYWORDS
 		size = 0
@@ -149,7 +152,8 @@ def get_settings():
 	IGNORE_CASE = setting.get('ignore_case', False)
 	WHOLE_WORD = setting.get('whole_word', False)
 	SCOPES = setting.get('colors_by_scope', SCOPES)
-	KEYWORDS = setting.get('fixed_keywords', [])
+	KEYWORDS = setting.get('fixed_keywords', KEYWORDS)
+	KEYWORD_COLOR = setting.get('keyword_color_by_scope', KEYWORD_COLOR)
 	return setting
 
 def plugin_loaded():
