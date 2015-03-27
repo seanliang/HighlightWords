@@ -119,7 +119,14 @@ class HighlightSettingsCommand(sublime_plugin.WindowCommand):
 		settings.set('colors_by_scope', SCOPES)
 		sublime.save_settings('HighlightWords.sublime-settings')
 
+# Compatibility notes:
+# This class depends on Sublime Text 3 API,
+# https://www.sublimetext.com/docs/3/api_reference.html.
+# Sublime Text 2 API (http://www.sublimetext.com/docs/api-reference),
+# class sublimeplugin.Plugin and onModified does not work with Sublime Text 3.
 class HighlightKeywordsCommand(sublime_plugin.EventListener):
+	# Refresh view 5 sec at most.
+	REFRESH_INVERVAL = 5000
 	modified = False
 
 	def handleTimeout(self, view):  
@@ -129,8 +136,7 @@ class HighlightKeywordsCommand(sublime_plugin.EventListener):
 	def on_modified(self, view):
 		if False == self.modified:
 			self.modified = True
-			# Refresh view 5 sec at most.
-			sublime.set_timeout(functools.partial(self.handleTimeout, view), 5000)
+			sublime.set_timeout(functools.partial(self.handleTimeout, view), REFRESH_INVERVAL)
 
 	def on_activated_async(self, view):
 		self.highlightKws(view)
