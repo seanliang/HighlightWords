@@ -18,6 +18,7 @@
 
 	// Keywords to be always highlighted, clear the list to disable it.
 	// "keyword" are literally matched, and "color" refers to theme scope names.
+	// Note that json has some special characters like '\' should be escaped.
 	"permanent_highlight_keyword_color_mappings":
 	[
 		//{"keyword": "TODO", "color": "support.function"},
