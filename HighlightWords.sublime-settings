@@ -11,4 +11,11 @@
 	"whole_word": false,
 	"use_regex": false,
 	"ignore_case": false,
+
+	// Keywords to be always highlighted, clear the list to disable it.
+	"permanent_highlight_keyword_color_mappings":
+	[
+		//{"keyword": "TODO", "color": "support.function"},
+		//{"keyword": "FIXIT", "color": "support.function"},
+	]
 }

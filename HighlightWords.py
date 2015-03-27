@@ -2,6 +2,7 @@ import sublime, sublime_plugin
 import time
 import sys
 import re
+import functools
 
 SCOPES = ['string', 'entity.name.class', 'variable.parameter', 'invalid.deprecated', 'invalid', 'support.function']
 
@@ -9,6 +10,7 @@ ST3 = False if sys.version_info < (3, 0) else True
 USE_REGEX = False
 IGNORE_CASE = False
 WHOLE_WORD = False # only effective when USE_REGEX is True
+KEYWORD_MAP = []
 
 class HighlightWordsCommand(sublime_plugin.WindowCommand):
 	def get_words(self, text):
@@ -117,13 +119,46 @@ class HighlightSettingsCommand(sublime_plugin.WindowCommand):
 		settings.set('colors_by_scope', SCOPES)
 		sublime.save_settings('HighlightWords.sublime-settings')
 
+class HighlightKeywordsCommand(sublime_plugin.EventListener):
+	modified = False
+
+	def handleTimeout(self, view):  
+		self.modified = False
+		self.highlightKws(view)
+
+	def on_modified(self, view):
+		if False == self.modified:
+			self.modified = True
+			# Refresh view 5 sec at most.
+			sublime.set_timeout(functools.partial(self.handleTimeout, view), 5000)
+
+	def on_activated_async(self, view):
+		self.highlightKws(view)
+
+	def highlightKws(self, view):
+		word_colors = KEYWORD_MAP
+		size = 0
+		flag = sublime.LITERAL
+		word_set = set()
+		for pair in word_colors:
+			word = pair['keyword']
+			color = pair['color']
+			if (word and color):
+				if word in word_set:
+					continue
+				word_set.add(word)
+				regions = view.find_all(word, flag)
+				view.add_regions('highlight_keyword_%d' % size, regions, color, '', sublime.HIDE_ON_MINIMAP)
+				size += 1
+
 def get_settings():
-	global USE_REGEX, IGNORE_CASE, WHOLE_WORD, SCOPES
+	global USE_REGEX, IGNORE_CASE, WHOLE_WORD, SCOPES, KEYWORD_MAP
 	setting = sublime.load_settings('HighlightWords.sublime-settings')
 	USE_REGEX = setting.get('use_regex', False)
 	IGNORE_CASE = setting.get('ignore_case', False)
 	WHOLE_WORD = setting.get('whole_word', False)
 	SCOPES = setting.get('colors_by_scope', SCOPES)
+	KEYWORD_MAP = setting.get('permanent_highlight_keyword_color_mappings', [])
 	return setting
 
 def plugin_loaded():
