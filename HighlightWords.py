@@ -136,7 +136,7 @@ class HighlightKeywordsCommand(sublime_plugin.EventListener):
 	def on_modified(self, view):
 		if False == self.modified:
 			self.modified = True
-			sublime.set_timeout(functools.partial(self.handleTimeout, view), REFRESH_INVERVAL)
+			sublime.set_timeout(functools.partial(self.handleTimeout, view), self.REFRESH_INVERVAL)
 
 	def on_activated_async(self, view):
 		self.highlightKws(view)
