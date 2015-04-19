@@ -20,6 +20,21 @@ Usage
 
 Note: These commands are also available in Command Panel with prefix "**HighlightWords:**"
 
+How to find color scope
+------------------
+  * Open the file that has some colour you want (e.g open C++ which have green strings)
+  * Select the word that has colour you want to use
+
+  ![selection](doc_images/selection.png)
+  * Open console (ctrl+~ (tilde))
+  * Paste `view.scope_name(view.sel()[0].begin())` and press `ENTER`
+  * Copy returned string, for mine selection it is `source.c++ meta.function.c meta.block.c storage.type.c`
+  * Paste this string inside color property:
+
+  ![highlight](doc_images/highlight.png)
+
+  **Color will change after you re-enter the tab**
+
 
 Contact me
 ------------------
