@@ -102,7 +102,7 @@ class HighlightSettingsCommand(sublime_plugin.WindowCommand):
 		names = [
 			'Turn [Regular Expression] ' + ('OFF' if USE_REGEX else 'ON'),
 			'Turn [Case Sensitive] ' + ('ON' if IGNORE_CASE else 'OFF'),
-			'Turn [Whole word] ' + ('OFF' if WHOLE_WORD else 'ON')
+			'Turn [Whole Word] ' + ('OFF' if WHOLE_WORD else 'ON')
 		]
 		self.window.show_quick_panel(names, self.on_done)
 
@@ -119,36 +119,30 @@ class HighlightSettingsCommand(sublime_plugin.WindowCommand):
 		settings.set('colors_by_scope', SCOPES)
 		sublime.save_settings('HighlightWords.sublime-settings')
 
-# Compatibility notes:
-# This class depends on Sublime Text 3 API,
-# https://www.sublimetext.com/docs/3/api_reference.html.
-# Sublime Text 2 API (http://www.sublimetext.com/docs/api-reference),
-# class sublimeplugin.Plugin and onModified does not work with Sublime Text 3.
 class HighlightKeywordsCommand(sublime_plugin.EventListener):
-	# Refresh view 5 sec at most.
-	REFRESH_INVERVAL = 5000
-	modified = False
 
-	def handleTimeout(self, view):  
-		self.modified = False
+	def handleTimeout(self, view, stamp):
+		if self.stamp != stamp:
+			return
 		self.highlightKws(view)
 
 	def on_modified(self, view):
-		if False == self.modified:
-			self.modified = True
-			sublime.set_timeout(functools.partial(self.handleTimeout, view), self.REFRESH_INVERVAL)
+		stamp = time.time()
+		self.stamp = stamp
+		sublime.set_timeout(functools.partial(self.handleTimeout, view, stamp), 500)
 
-	def on_activated_async(self, view):
-		self.highlightKws(view)
+	def on_activated(self, view):
+		stamp = time.time()
+		self.stamp = stamp
+		sublime.set_timeout(functools.partial(self.handleTimeout, view, stamp), 500)
 
 	def highlightKws(self, view):
-		word_colors = KEYWORD_MAP
 		size = 0
-		flag = sublime.LITERAL
 		word_set = set()
-		for pair in word_colors:
+		for pair in KEYWORD_MAP:
 			word = pair['keyword']
 			color = pair['color']
+			flag = pair.get('flag', sublime.LITERAL)
 			if (word and color):
 				if word in word_set:
 					continue

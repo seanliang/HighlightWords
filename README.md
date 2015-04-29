@@ -16,7 +16,8 @@ Usage
 * Toggle Settings: Select "Edit > Highlight Words > Toggle Settings"
 * Edit settings file: Select "Preferences" > "Package Settings" > "HighlightWords", copy settings from default to user, and edit settings file. Available settings are:
  - "colors_by_scope": Change the highlight colors.
- - "permanent_highlight_keyword_color_mappings": Define always highlighted keywords with specified colors, such as "TODO" or "FIXIT".
+ - "permanent_highlight_keyword_color_mappings": Define always highlighted keywords with specified colors, such as "TODO" or "FIXIT". The optional "flag" parameter may be 0 (regex), 1 (literal), 2 (regex and ignore case) or 3 (literal and ignore case).
+* Perl-style regular expression patterns are accepted. For example, to highlight "fix a bug" but not "prefix with", the expression could be "\\bfix .*\\b".
 
 Note: These commands are also available in Command Panel with prefix "**HighlightWords:**"
 
